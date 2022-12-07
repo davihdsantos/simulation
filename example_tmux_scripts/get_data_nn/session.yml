@@ -24,30 +24,30 @@ windows:
   - control:
       layout: tiled
       panes:
-        - waitForOdometry; roslaunch mrs_uav_general core.launch
+ #       - waitForOdometry; roslaunch mrs_uav_general core.launch
   - takeoff:
       layout: tiled
       panes:
-        - waitForSimulation; roslaunch mrs_uav_general automatic_start.launch
-        - 'waitForControl;
-          rosservice call /$UAV_NAME/mavros/cmd/arming 1;
-          sleep 2;
-          rosservice call /$UAV_NAME/mavros/set_mode 0 offboard'
+#        - waitForSimulation; roslaunch mrs_uav_general automatic_start.launch
+ #       - 'waitForControl;
+ #         rosservice call /$UAV_NAME/mavros/cmd/arming 1;
+ #         sleep 2;
+ #         rosservice call /$UAV_NAME/mavros/set_mode 0 offboard'
   - goto:
       layout: tiled
       panes:
-        - 'history -s rosservice call /$UAV_NAME/control_manager/goto \"goal: \[0.0, 10.0, 1.5, 0.0\]\"'
+ #       - 'history -s rosservice call /$UAV_NAME/control_manager/goto \"goal: \[0.0, 10.0, 1.5, 0.0\]\"'
   - rviz:
       layout: tiled
       panes:
-        - waitForControl; roslaunch mrs_uav_testing rviz_random_simulation.launch
-        - waitForControl; roslaunch mrs_rviz_plugins load_robot.launch
+        #- waitForControl; roslaunch mrs_uav_testing rviz_random_simulation.launch
+#        - waitForControl; roslaunch mrs_rviz_plugins load_robot.launch
   - easy_control:
       layout: tiled
       panes:
-        - waitForControl; waitForControl; roslaunch rc_teleop rc_teleop_txs.launch
-        - waitForControl; waitForControl; roslaunch mrs_rviz_plugins rviz_interface.launch
+        #- waitForControl; waitForControl; roslaunch rc_teleop rc_teleop_txs.launch
+        #- waitForControl; waitForControl; roslaunch mrs_rviz_plugins rviz_interface.launch
   - layout:
       layout: tiled
       panes:
-        - waitForControl; sleep 3; ~/.i3/layout_manager.sh ./layout.json
+#        - waitForControl; sleep 3; ~/.i3/layout_manager.sh ./layout.json

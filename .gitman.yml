@@ -12,7 +12,7 @@ sources:
         target: ros_packages/mrs_gazebo_common_resources
     scripts:
       - git submodule update --init --recursive --depth 1
-  - repo: https://github.com/ctu-mrs/mrs_simulation.git
+  - repo: https://github.com/davihdsantos/mrs_simulation.git
     name: mrs_simulation
     rev: master
     type: git
@@ -24,7 +24,7 @@ sources:
         target: ros_packages/mrs_simulation
     scripts:
       - git submodule update --init --recursive --depth 1
-  - repo: https://github.com/ctu-mrs/px4_firmware.git
+  - repo: https://github.com/davihdsantos/px4_firmware.git
     name: px4_firmware
     rev: 1.11.2
     type: git
@@ -49,7 +49,7 @@ sources_locked:
         target: ros_packages/mrs_gazebo_common_resources
     scripts:
       - git submodule update --init --recursive --depth 1
-  - repo: https://github.com/ctu-mrs/mrs_simulation.git
+  - repo: https://github.com/davihdsantos/mrs_simulation.git
     name: mrs_simulation
     rev: a53399b5cc80fa3bf1ec409c01aa7cd2f4a9a566
     type: git
@@ -61,7 +61,7 @@ sources_locked:
         target: ros_packages/mrs_simulation
     scripts:
       - git submodule update --init --recursive --depth 1
-  - repo: https://github.com/ctu-mrs/px4_firmware.git
+  - repo: https://github.com/davihdsantos/px4_firmware.git
     name: px4_firmware
     rev: 1ee88accfe526d0c07f4e0b62bff0e81243add07
     type: git
