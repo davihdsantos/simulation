@@ -51,7 +51,7 @@ sources_locked:
       - git submodule update --init --recursive --depth 1
   - repo: https://github.com/davihdsantos/mrs_simulation.git
     name: mrs_simulation
-    rev: a53399b5cc80fa3bf1ec409c01aa7cd2f4a9a566
+    rev: 
     type: git
     params:
     sparse_paths:
@@ -63,7 +63,7 @@ sources_locked:
       - git submodule update --init --recursive --depth 1
   - repo: https://github.com/davihdsantos/px4_firmware.git
     name: px4_firmware
-    rev: 1ee88accfe526d0c07f4e0b62bff0e81243add07
+    rev: 
     type: git
     params:
     sparse_paths:
