@@ -49,30 +49,6 @@ sources_locked:
         target: ros_packages/mrs_gazebo_common_resources
     scripts:
       - git submodule update --init --recursive --depth 1
-  - repo: https://github.com/davihdsantos/mrs_simulation.git
-    name: mrs_simulation
-    rev: 
-    type: git
-    params:
-    sparse_paths:
-      -
-    links:
-      - source: ''
-        target: ros_packages/mrs_simulation
-    scripts:
-      - git submodule update --init --recursive --depth 1
-  - repo: https://github.com/davihdsantos/px4_firmware.git
-    name: px4_firmware
-    rev: 
-    type: git
-    params:
-    sparse_paths:
-      -
-    links:
-      - source: ''
-        target: ros_packages/px4_firmware
-    scripts:
-      - git submodule update --init --recursive --depth 1
 default_group: ''
 groups:
   -
