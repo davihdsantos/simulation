@@ -1,59 +1,95 @@
-# MRS Gazebo Simulation
-![](.fig/thumbnail.jpg)
+# Control allocation using Machine Learning
 
-| Simulation build status | [![Build Status](https://github.com/ctu-mrs/simulation/workflows/Melodic/badge.svg)](https://github.com/ctu-mrs/simulation/actions) | [![Build Status](https://github.com/ctu-mrs/simulation/workflows/Noetic/badge.svg)](https://github.com/ctu-mrs/simulation/actions) |
-|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+This repository implements the control allocation (mixing) with machine learning in PX4. A ML model is trained in Python (google colabs) using Keras, deployed in the PX4 code using the fdeep library and tested using the mrs sitl environment. Although the implementation is different, the methodology was inspired by [this paper](https://ieeexplore.ieee.org/document/9536649).
 
-## Submodules
+## Overview
 
-| ROS Package                                                                           | 18.04                                                                                                                                                                 | 20.04                                                                                                                                                                |
-|---------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [mrs_simulation](https://github.com/ctu-mrs/mrs_simulation)                           | [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/Melodic/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions)                           | [![Build Status](https://github.com/ctu-mrs/mrs_simulation/workflows/Noetic/badge.svg)](https://github.com/ctu-mrs/mrs_simulation/actions)                           |
-| [mrs_gazebo_common_resources](https://github.com/ctu-mrs/mrs_gazebo_common_resources) | [![Build Status](https://github.com/ctu-mrs/mrs_gazebo_common_resources/workflows/Melodic/badge.svg)](https://github.com/ctu-mrs/mrs_gazebo_common_resources/actions) | [![Build Status](https://github.com/ctu-mrs/mrs_gazebo_common_resources/workflows/Noetic/badge.svg)](https://github.com/ctu-mrs/mrs_gazebo_common_resources/actions) |
-| [px4](https://github.com/ctu-mrs/px4_firmware)                                        | [![Build Status](https://github.com/ctu-mrs/px4_firmware/workflows/Melodic/badge.svg)](https://github.com/ctu-mrs/px4_firmware/actions)                               | [![Build Status](https://github.com/ctu-mrs/px4_firmware/workflows/Noetic/badge.svg)](https://github.com/ctu-mrs/px4_firmware/actions)                               |
-| [mavlink_sitl_gazebo](https://github.com/ctu-mrs/px4_sitl_gazebo)                     |                                                                                                                                                                       |                                                                                                                                                                      |
+The basic idea is to create a machine learning pipeline that can be optimize to increase motor mixing performance. 
 
-## System requirements
+The current motor mixing uses a set of geometric information from the multicopter frame to calculate the appropriate thrust of each actuator (motor + propeller) that applies a certaion force in the multicopter frame, given by the control pipeline. Then, this actuator thrust is converted to a Normalized Actuator Command (NAC) in the interval [-1, 1] using a simple model. This command is then sent to the output_drivers (PWM, UAVCAN, etc..).
 
-Required OS is Ubuntu 20.04 LTS 64-bit (Ubuntu 18.04 LTS 64-bit) or its flavors that can install ROS Noetic (ROS Melodic).
-The suggested variant of OS installation is dual boot instead of virtualization that can be slow and can not handle well the simulation GUI.
-We use [Gitman](https://github.com/jacebrowning/gitman) to manage the repository **submodules**.
-The repository are supposed to be compiled by [catkin tools](https://catkin-tools.readthedocs.io).
+A simple MLP model that mimics the behavior of the current PX4 mixing was implemented as proof of concept.
 
-## Unmanned Aerial Vehicles
+## Instalation
 
-| Model        | Spawn argument | Simulation                    |
-|--------------|----------------|-------------------------------|
-| DJI f330     | `--f330`       | ![](.fig/f330_simulation.jpg) |
-| DJI f450     | `--f450`       | ![](.fig/f450_simulation.jpg) |
-| Holybro x500 | `--x500`       | ![](.fig/x500_simulation.jpg) |
-| DJI f550     | `--f550`       | ![](.fig/f550_simulation.jpg) |
-| Tarot t650   | `--t650`       | ![](.fig/t650_simulation.jpg) |
-| NAKI II      | `--naki`       | ![](.fig/naki_simulation.jpg) |
+The project is organized as a set of repositories that were forked from the mrs project. The reps forked are: 
 
-## Examples of tmuxinator simulation sessions
+- [simulation](https://github.com/davihdsantos/simulation)
+- [mrs_simulation](https://github.com/davihdsantos/mrs_simulation)
+- [px4_firmware](https://github.com/davihdsantos/px4_firmware/tree/control_allocation_nn)
+    - [NuttX](https://github.com/davihdsantos/NuttX/tree/control_allocator_laser)
 
-Selected tmuxinator scripts:
+The main rep is the px4_firmware, where the majority of the changes are made.
 
-- [example_tmux_scripts/one_drone_gps](example_tmux_scripts/one_drone_gps)
-- [example_tmux_scripts/one_drone_gps_standalone](example_tmux_scripts/one_drone_gps_standalone)
-- [example_tmux_scripts/one_drone_optic_flow](example_tmux_scripts/one_drone_optic_flow)
-- [example_tmux_scripts/two_drones_gps](example_tmux_scripts/two_drones_gps)
+The easiest way to install is:
 
-Bare tmux script (similar to the one used on real UAVs):
+1) install the mrs system as indicated in their main rep;
+2) then:
 
-- [example_tmux_scripts/just_flying_bare_tmux](example_tmux_scripts/just_flying_bare_tmux)
+    ```console
+    cd ~/mrs_workspace/src/simulation
+    git remote set-url origin https://github.com/davihdsantos/simulation
+    git pull
+    gitman update
+    ```
+3) this should install the forked submodules described in gitman.yml.
 
-For detail description of script capabilities for spawning vehicles see [mrs_simulation](https://github.com/ctu-mrs/mrs_simulation).
+    If this instalation process dosent works, you can set every remote repository individually. Example:
 
-## Installing simulation
+    ```console
+    cd ~/mrs_workspace/src/simulation/ros_packages/px4_firmware
+    git remote set-url origin https://github.com/davihdsantos/px4_firmware
+    git pull
+    git checkout control_allocation_nn
+    ```
+    > **Note** <br>
+    > NuttX git locaton is *px4_firmware/platforms/nuttx/NuttX/nuttx* and the branch is **control_allocation_laser**
 
-Install the whole [MRS UAV system](https://github.com/ctu-mrs/mrs_uav_system).
+4) install the [frugally deep library](https://github.com/Dobiasd/frugally-deep#requirements-and-installation). this library allows deployment of .h5 models in c++.
 
-## Finishing your .bashrc
+5) follow [these instructions](https://github.com/davihdsantos/px4_firmware/blob/control_allocation_nn/src/examples/nn_example/README.md) to generate a json description of the .h5 that is used by the fdeep library.
 
-The `install.sh` script will add the following to your .bashrc:
-```bash
-source /opt/ros/<ros_version>/setup.bash
-source /usr/share/gazebo/setup.sh
+    > **Warning** <br>
+    > the .json must be placed at *~/.ros/sitl_uav1/* since this is the base directory for the running sitl PX4 firmware, otherwise you will get the error "cannot open fdeep_model.json".
+
+6) Then compile the mrs_workspace:
+
+    ```console
+      cd ~/mrs_workspace
+      catkin build
+    ```
+
+### Running
+
+```console
+  cd ~/mrs_workspace/src/simulation/example_tmux_scripts/get_nn_data
+  ./start.sh
 ```
+
+## How it works (end-to-end)
+
+### Getting the data
+
+The first step is to get the data to train the ML model. This can be done in several ways: you can use a joystick to move the drone around (see rc_teleop), or you can use a module to publish commands directly to actuator_commands topic, as it is done here. To run this module just type *send_cmd_to_motor* in the console (gazebo window in tmux). 
+
+When you get enough data, use *commander land* in the px4 console to land the drone, disarm and save the log file. The log is saved at *~/.ros/sitl_uav1/log/*. 
+
+### Getting the .h5 model
+
+Use the command *ulog2csv* to get the csv files from the ulog. 
+
+Then, use two colabs: prepare_data and train_nn. prepare_data is used to prepare the data for training and train_nn is used to train and evaluate the NN model. This generates a h5 file in your driver.
+
+> **Note** <br>
+> the prepare_data.ipynb expects a file named *.csv. this is not the name of the file after running ulog2csv, so you might have to rename the files (remove the _0 at the end) and/or open it with google sheets in your driver (and rename it).
+
+> **Warning** <br>
+> pay attention to the path that the colabs expect to find the files. the files for prepare_data.ipynb (csv files) are in */content/drive/My\ Drive/UFPB/control_allocation_nn/data_train/first_experiment/raw/* in my driver, but you can change that to a more convinient location. The same with the tran_nn.ipynb colab.
+
+### Deploying the model
+
+Download the h5 and convert it to a json, as instructed here. The .json must be placed at *~/.ros/sitl_uav1/*
+
+The main code is located at *px4_firmware/src/lib/mixer/MultirotorMixer/MultirotorMixer.cpp* line 338. The legacy mixer is runned by updateValues() and the ML mixer is runned by updateValuesNN(). Just uncomment the one you want to use.
+
+The function *printOutputs(rate, outputs)* prints the RAC in the console.
