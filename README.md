@@ -35,7 +35,6 @@ The easiest way to install is:
     gitman update
     ```
     
-    
     this should install the forked submodules described in gitman.yml.
 
     If this instalation process dosent works, you can set every remote repository individually. Example:
@@ -74,6 +73,9 @@ The easiest way to install is:
 ```
 
 ## How it works (end-to-end)
+
+> **Note** <br>
+> If you just want to test the code you can download a json model [here](https://drive.google.com/file/d/1zBFggNAKTSWqKQ4PhsHKwCgI0GOkorNf/view?usp=sharing), put it in *~/.ros/sitl_uav1/* and run the simulation.
 
 ### Getting the data
 
