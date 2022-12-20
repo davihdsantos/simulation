@@ -2,6 +2,8 @@
 
 This repository implements the control allocation (mixing) with machine learning in PX4. A ML model is trained in Python (google colabs) using Keras, deployed in the PX4 code using the fdeep library and tested using the mrs sitl environment. Although the implementation is different, the methodology was inspired by [this paper](https://ieeexplore.ieee.org/document/9536649).
 
+This rep can be used as reference to implement and deploy ML models in PX4 firmware.
+
 ## Overview
 
 The basic idea is to create a machine learning pipeline that can be optimize to increase motor mixing performance. 
