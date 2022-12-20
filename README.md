@@ -6,7 +6,7 @@ This rep can be used as reference to implement and deploy ML models in PX4 firmw
 
 ## Overview
 
-The basic idea is to create a machine learning pipeline that can be optimize to increase motor mixing performance. 
+The basic idea is to create a machine learning pipeline that can be optimized to increase motor mixing performance. 
 
 The legacy PX4 motor mixing uses a set of geometric information from the multicopter frame to calculate the appropriate thrust of each actuator (motor + propeller) that applies a certain desired force/torque in the multicopter frame, given by the control pipeline. Then, this actuator thrust is converted to a Normalized Actuator Command (NAC) in the interval [-1, 1] using a simple model. This command is then sent to the output_drivers (PWM, UAVCAN, etc..).
 
@@ -100,6 +100,6 @@ Then, use two colabs: prepare_data and train_nn. prepare_data is used to prepare
 
 Download the h5 and convert it to a json, as instructed [here](https://github.com/davihdsantos/px4_firmware/blob/control_allocation_nn/src/examples/nn_example/README.md). The .json must be placed at *~/.ros/sitl_uav1/*
 
-The main code is located at *px4_firmware/src/lib/mixer/MultirotorMixer/MultirotorMixer.cpp* line 338. The legacy mixer is executed by updateValues() and the ML mixer is executed by updateValuesNN(). Just uncomment the one you want to use.
+The main code is located at *px4_firmware/src/lib/mixer/MultirotorMixer/MultirotorMixer.cpp* line 338. The legacy mixer is executed by updateValues() and the ML mixer is executed by updateValuesNN(). Just uncomment the one you want to use and rebuild the mrs_workspace.
 
 The function *printOutputs(rate, outputs)* prints the NAC in the console.
